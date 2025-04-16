@@ -1,0 +1,13 @@
+# Ignore Visual Studio specific files
+.vs/
+*.user
+*.suo
+*.db
+*.VC.db
+
+# Ignore build output
+bin/
+obj/
+
+# Ignore launch settings (optional)
+launchSettings.json
