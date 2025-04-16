@@ -44,6 +44,29 @@ namespace TaskApi.Controllers
             }
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string query)
+        {
+            _logger.LogInformation("Search() called with query={Query}", query);
+
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest("Search query cannot be empty.");
+
+            try
+            {
+                var results = await _service.SearchAsync(query);
+                var dtoList = _mapper.Map<IEnumerable<ToDoItemDto>>(results);
+
+                _logger.LogInformation("Search() found {Count} items matching '{Query}'", dtoList.Count(), query);
+                return Ok(dtoList);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred in Search()");
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
         [HttpGet("paged")]
         public async Task<IActionResult> GetPaged(int? pageNumber, int? pageSize)
         {

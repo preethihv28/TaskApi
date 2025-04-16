@@ -91,5 +91,24 @@ namespace TaskApi.Services
             _logger.LogInformation("Retrieved {Count} items for the date range", items.Count());
             return items;
         }
+
+        // New SearchAsync method to handle search queries
+        public async Task<IEnumerable<ToDoItem>> SearchAsync(string query)
+        {
+            _logger.LogInformation("Searching ToDo items with query: {Query}", query);
+
+            // Ensure the query isn't null or empty before attempting to search
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                _logger.LogWarning("Search query is empty or null");
+                return Enumerable.Empty<ToDoItem>(); // Return an empty list if query is invalid
+            }
+
+            // Fetch search results from the repository
+            var items = await _repository.SearchAsync(query);
+
+            _logger.LogInformation("Found {Count} items matching query: {Query}", items.Count(), query);
+            return items;
+        }
     }
 }

@@ -32,6 +32,7 @@ namespace TaskApi.Repositories
                 throw;
             }
         }
+
         public async Task<IEnumerable<ToDoItem>> GetPagedAsync(int pageNumber, int pageSize)
         {
             try
@@ -169,6 +170,39 @@ namespace TaskApi.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching ToDo items by date range.");
+                throw;
+            }
+        }
+
+        // New SearchAsync method to search by title and description
+        public async Task<IEnumerable<ToDoItem>> SearchAsync(string query)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    _logger.LogWarning("Search query is null or empty.");
+                    return Enumerable.Empty<ToDoItem>();
+                }
+
+                _logger.LogInformation("Searching ToDo items with query: {Query}", query);
+
+                using var conn = _context.CreateConnection();
+
+                string sql = @"
+                    SELECT * FROM ""ToDoItems""
+                    WHERE ""Title"" ILIKE @Query OR ""Description"" ILIKE @Query
+                    ORDER BY ""CreatedAt"" DESC";
+
+                // Use ILIKE for case-insensitive search
+                var result = await conn.QueryAsync<ToDoItem>(sql, new { Query = "%" + query + "%" });
+
+                _logger.LogInformation("Found {Count} ToDo items matching the search query.", result.Count());
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while searching ToDo items.");
                 throw;
             }
         }
