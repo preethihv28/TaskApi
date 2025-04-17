@@ -5,6 +5,10 @@ namespace TaskApi.Services
     public interface IToDoService
     {
         Task<IEnumerable<ToDoItem>> GetAllAsync();
+
+        Task<IEnumerable<ToDoItem>> SearchAsync(string query);
+
+
         Task<IEnumerable<ToDoItem>> GetPagedAsync(int pageNumber, int pageSize);
         Task<ToDoItem?> GetByIdAsync(int id);
         Task CreateAsync(ToDoItem item);

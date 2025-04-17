@@ -11,5 +11,8 @@ namespace TaskApi.Repositories
         Task UpdateAsync(ToDoItem item);
         Task DeleteAsync(int id);
         Task<IEnumerable<ToDoItem>> GetByDateRangeAsync(long startEpoch, long endEpoch);
+
+        Task<IEnumerable<ToDoItem>> SearchAsync(string query);
+
     }
 }
